@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { Suspense, useState, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
@@ -11,6 +11,14 @@ import { ChevronDown } from 'lucide-react'
 type SortOption = 'popular' | 'price-low' | 'price-high' | 'newest'
 
 export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-center">Loading products...</div>}>
+      <ShopContent />
+    </Suspense>
+  )
+}
+
+function ShopContent() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('search')?.toLowerCase() || ''
 
@@ -26,7 +34,6 @@ export default function ShopPage() {
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products]
 
-    // Search filter
     if (searchQuery) {
       result = result.filter(
         (p) =>
@@ -36,25 +43,20 @@ export default function ShopPage() {
       )
     }
 
-    // Category filter
     if (selectedCategory) {
       result = result.filter((p) => p.category === selectedCategory)
     }
 
-    // Sort
     switch (sortBy) {
       case 'price-low':
         result.sort((a, b) => getBasePrice(a) - getBasePrice(b))
         break
-
       case 'price-high':
         result.sort((a, b) => getBasePrice(b) - getBasePrice(a))
         break
-
       case 'newest':
         result.reverse()
         break
-
       case 'popular':
       default:
         result.sort((a, b) => b.reviews - a.reviews)
@@ -70,7 +72,6 @@ export default function ShopPage() {
 
       <main className="flex-1">
 
-        {/* Page Title */}
         <section className="bg-white py-12 md:py-14">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -91,13 +92,11 @@ export default function ShopPage() {
           </div>
         </section>
 
-        {/* Shop Section */}
         <section className="py-10 md:py-12 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-              {/* Sidebar Desktop */}
               <div className="hidden lg:block lg:col-span-1">
                 <div className="bg-white rounded-2xl p-6 sticky top-24 border border-gray-200 shadow-sm">
 
@@ -136,29 +135,20 @@ export default function ShopPage() {
                 </div>
               </div>
 
-              {/* Products */}
               <div className="lg:col-span-3">
 
-                {/* Top Controls */}
                 <div className="bg-white rounded-2xl p-4 mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-200 shadow-sm">
 
                   <p className="text-gray-600">
-                    Showing{' '}
-                    <span className="font-semibold">
-                      {filteredAndSortedProducts.length}
-                    </span>{' '}
-                    products
+                    Showing <span className="font-semibold">{filteredAndSortedProducts.length}</span> products
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-3">
 
-                    {/* Mobile Category Dropdown */}
                     <div className="relative lg:hidden">
                       <select
                         value={selectedCategory || ''}
-                        onChange={(e) =>
-                          setSelectedCategory(e.target.value || null)
-                        }
+                        onChange={(e) => setSelectedCategory(e.target.value || null)}
                         className="appearance-none px-4 py-2 pr-10 border border-gray-200 rounded-lg bg-white text-gray-700 font-medium"
                       >
                         <option value="">All Categories</option>
@@ -172,7 +162,6 @@ export default function ShopPage() {
                       <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
                     </div>
 
-                    {/* Sort */}
                     <div className="relative">
                       <select
                         value={sortBy}
@@ -191,7 +180,6 @@ export default function ShopPage() {
                   </div>
                 </div>
 
-                {/* Product Grid */}
                 {filteredAndSortedProducts.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {filteredAndSortedProducts.map((product) => (
