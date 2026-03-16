@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { ProductCard } from '@/components/product-card'
@@ -10,15 +11,32 @@ import { ChevronDown } from 'lucide-react'
 type SortOption = 'popular' | 'price-low' | 'price-high' | 'newest'
 
 export default function ShopPage() {
+  const searchParams = useSearchParams()
+  const searchQuery = searchParams.get('search')?.toLowerCase() || ''
+
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [sortBy, setSortBy] = useState<SortOption>('popular')
 
   const categories = [...new Set(products.map((p) => p.category))]
 
+  const getBasePrice = (product: (typeof products)[number]) => {
+    return product.prices[product.packSizes[0]] || 0
+  }
+
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products]
 
-    // Filter by category
+    // Search filter
+    if (searchQuery) {
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchQuery) ||
+          p.category.toLowerCase().includes(searchQuery) ||
+          p.tags.some((tag) => tag.toLowerCase().includes(searchQuery))
+      )
+    }
+
+    // Category filter
     if (selectedCategory) {
       result = result.filter((p) => p.category === selectedCategory)
     }
@@ -26,14 +44,17 @@ export default function ShopPage() {
     // Sort
     switch (sortBy) {
       case 'price-low':
-        result.sort((a, b) => a.price - b.price)
+        result.sort((a, b) => getBasePrice(a) - getBasePrice(b))
         break
+
       case 'price-high':
-        result.sort((a, b) => b.price - a.price)
+        result.sort((a, b) => getBasePrice(b) - getBasePrice(a))
         break
+
       case 'newest':
         result.reverse()
         break
+
       case 'popular':
       default:
         result.sort((a, b) => b.reviews - a.reviews)
@@ -41,7 +62,7 @@ export default function ShopPage() {
     }
 
     return result
-  }, [selectedCategory, sortBy])
+  }, [selectedCategory, sortBy, searchQuery])
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -52,6 +73,7 @@ export default function ShopPage() {
         {/* Page Title */}
         <section className="bg-white py-12 md:py-14">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-3">
               Our Products
             </h1>
@@ -59,6 +81,13 @@ export default function ShopPage() {
             <p className="text-lg text-gray-600">
               Discover our complete range of premium peanut snacks
             </p>
+
+            {searchQuery && (
+              <p className="text-sm text-amber-600 mt-3">
+                Search results for "{searchQuery}"
+              </p>
+            )}
+
           </div>
         </section>
 
@@ -171,12 +200,13 @@ export default function ShopPage() {
                   </div>
                 ) : (
                   <div className="bg-white rounded-2xl p-12 text-center border border-gray-200 shadow-sm">
+
                     <h3 className="font-semibold text-xl text-gray-900 mb-2">
                       No Products Found
                     </h3>
 
                     <p className="text-gray-600 mb-6">
-                      Try adjusting category filters.
+                      Try adjusting category filters or search keywords.
                     </p>
 
                     <button
@@ -185,6 +215,7 @@ export default function ShopPage() {
                     >
                       Reset Filters
                     </button>
+
                   </div>
                 )}
 

@@ -5,11 +5,16 @@ import Image from 'next/image'
 import { useState, useRef, useEffect } from 'react'
 import { ShoppingCart, Heart, Menu, X, Search } from 'lucide-react'
 import { useCart } from '@/lib/cart-context'
+import { useRouter } from 'next/navigation'
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+
   const searchRef = useRef<HTMLDivElement>(null)
+
+  const router = useRouter()
 
   const { cart, wishlist } = useCart()
 
@@ -20,6 +25,21 @@ export function Header() {
     { href: '/contact', label: 'Contact' },
     { href: '/faq', label: 'FAQ' },
   ]
+
+  const totalCartItems = cart.reduce((total, item) => total + item.quantity, 0)
+
+  const handleSearch = () => {
+    const trimmed = searchTerm.trim()
+
+    if (!trimmed) {
+      router.push('/shop')
+    } else {
+      router.push(`/shop?search=${encodeURIComponent(trimmed)}`)
+    }
+
+    setIsSearchOpen(false)
+    setSearchTerm('')
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -124,14 +144,30 @@ export function Header() {
 
               {isSearchOpen && (
                 <div className="absolute right-0 top-12 w-80 bg-white border border-gray-200 shadow-xl rounded-xl p-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="
-                      w-full border border-gray-300 rounded-md px-4 py-2
-                      focus:outline-none focus:ring-2 focus:ring-amber-500
-                    "
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          handleSearch()
+                        }
+                      }}
+                      placeholder="Search products..."
+                      className="
+                        flex-1 border border-gray-300 rounded-md px-4 py-2
+                        focus:outline-none focus:ring-2 focus:ring-amber-500
+                      "
+                    />
+
+                    <button
+                      onClick={handleSearch}
+                      className="px-3 bg-amber-600 hover:bg-amber-700 text-white rounded-md transition-all"
+                    >
+                      <Search className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -161,12 +197,13 @@ export function Header() {
               "
             >
               <ShoppingCart className="w-5 h-5" />
-              {cart.length > 0 && (
+              {totalCartItems > 0 && (
                 <span className="absolute -top-2 -right-2 bg-amber-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                  {cart.length}
+                  {totalCartItems}
                 </span>
               )}
             </Link>
+
           </div>
         </div>
 
@@ -187,6 +224,7 @@ export function Header() {
             </div>
           </nav>
         )}
+
       </div>
     </header>
   )

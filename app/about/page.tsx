@@ -175,59 +175,8 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Why Choose */}
-        <section className="py-16 md:py-20 bg-gradient-to-r from-amber-50 to-orange-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            <div className="text-center mb-14">
-              <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900">
-                Why Choose Nut8Bites?
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-              {[
-                {
-                  value: '100%',
-                  title: 'Natural Ingredients',
-                  desc: 'No artificial additives or preservatives.',
-                },
-                {
-                  value: '8g+',
-                  title: 'Protein Per Serving',
-                  desc: 'Premium nutrition in every serving.',
-                },
-                {
-                  value: '7',
-                  title: 'Premium Products',
-                  desc: 'A growing range crafted for every taste.',
-                },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-white p-8 rounded-2xl border border-amber-200 shadow-sm hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="text-4xl font-serif font-bold text-amber-600 mb-3">
-                    {item.value}
-                  </div>
-
-                  <h3 className="font-semibold text-xl text-gray-900 mb-3">
-                    {item.title}
-                  </h3>
-
-                  <p className="text-gray-600">
-                    {item.desc}
-                  </p>
-                </div>
-              ))}
-
-            </div>
-          </div>
-        </section>
-
         {/* CTA */}
-        <section className="py-16 md:py-20 bg-white">
+        <section className="py-16 md:py-20 bg-white border-t border-gray-100">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-6">

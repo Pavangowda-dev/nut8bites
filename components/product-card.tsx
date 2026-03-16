@@ -18,6 +18,9 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const inWishlist = isInWishlist(product.id)
 
+  const defaultPack = product.packSizes[0]
+  const defaultPrice = product.prices[defaultPack]
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -99,19 +102,25 @@ export function ProductCard({ product }: ProductCardProps) {
             </span>
           </div>
 
-          {/* Price */}
-          <div className="flex items-center gap-2 mb-4 flex-wrap">
-            <span className="text-2xl font-bold text-gray-900">
-              ₹{product.price}
-            </span>
+          {/* Price + Pack Size */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-2xl font-bold text-gray-900">
+                ₹{defaultPrice}
+              </span>
 
-            <span className="text-sm text-gray-400 line-through">
-              ₹{Math.round(product.price * 1.2)}
-            </span>
+              <span className="text-sm text-gray-400 line-through">
+                ₹{Math.round(defaultPrice * 1.2)}
+              </span>
 
-            <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
-              15% OFF
-            </span>
+              <span className="text-xs font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
+                15% OFF
+              </span>
+            </div>
+
+            <p className="text-sm text-gray-500 mt-1">
+              {defaultPack}
+            </p>
           </div>
 
           {/* Buttons */}

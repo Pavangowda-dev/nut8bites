@@ -14,7 +14,7 @@ import {
   Star,
   Truck,
   Shield,
-  RefreshCw,
+  Leaf,
 } from 'lucide-react'
 
 interface ProductDetailPageProps {
@@ -28,34 +28,38 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
   const product = products.find((p) => p.id === resolvedParams.id)
 
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } =
-    useCart()
+  const {
+    addToCart,
+    addToWishlist,
+    removeFromWishlist,
+    isInWishlist,
+    cartItems = [],
+  } = useCart()
 
   const [quantity, setQuantity] = useState(1)
+
+  const [selectedPack, setSelectedPack] = useState(
+    product?.packSizes?.[0] || ''
+  )
 
   const [activeTab, setActiveTab] = useState<
     'description' | 'ingredients' | 'nutrition' | 'reviews'
   >('description')
 
-  const [isAdded, setIsAdded] = useState(false)
-
   if (!product) {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
-
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Product Not Found
             </h1>
-
             <Link href="/shop" className="text-amber-600 font-medium">
               Back to Shop
             </Link>
           </div>
         </div>
-
         <Footer />
       </div>
     )
@@ -67,10 +71,16 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
   const inWishlist = isInWishlist(product.id)
 
+  const currentPrice = product.prices[selectedPack] || 0
+
+  const isInCart = Array.isArray(cartItems)
+    ? cartItems.some((item) => item.id === product.id)
+    : false
+
   const handleAddToCart = () => {
-    addToCart(product, quantity)
-    setIsAdded(true)
-    setTimeout(() => setIsAdded(false), 1500)
+    if (!isInCart) {
+      addToCart(product, quantity)
+    }
   }
 
   const handleWishlist = () => {
@@ -141,15 +151,36 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   {product.description}
                 </p>
 
+                {/* Pack Sizes */}
+                <div className="mb-6">
+                  <p className="font-medium text-gray-900 mb-3">Select Pack Size</p>
+
+                  <div className="flex gap-3 flex-wrap">
+                    {product.packSizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedPack(size)}
+                        className={`px-4 py-2 rounded-lg border font-medium transition-all ${
+                          selectedPack === size
+                            ? 'border-amber-600 bg-amber-50 text-amber-700'
+                            : 'border-gray-200 text-gray-700'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Price */}
                 <div className="mb-6">
                   <div className="flex items-center gap-3 flex-wrap">
                     <span className="text-4xl font-bold text-gray-900">
-                      ₹{product.price}
+                      ₹{currentPrice}
                     </span>
 
                     <span className="text-xl text-gray-400 line-through">
-                      ₹{Math.round(product.price * 1.2)}
+                      ₹{Math.round(currentPrice * 1.2)}
                     </span>
 
                     <span className="text-sm font-semibold text-green-700 bg-green-50 px-2 py-1 rounded">
@@ -196,13 +227,13 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                   <button
                     onClick={handleAddToCart}
                     className={`flex-1 py-3 px-6 rounded-lg text-white font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
-                      isAdded
+                      isInCart
                         ? 'bg-green-600'
                         : 'bg-amber-600 hover:bg-amber-700'
                     }`}
                   >
                     <ShoppingCart className="w-5 h-5" />
-                    {isAdded ? 'Added to Cart' : 'Add to Cart'}
+                    {isInCart ? 'In Your Cart' : 'Add to Cart'}
                   </button>
 
                   <button
@@ -220,7 +251,6 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
 
                 {/* Trust */}
                 <div className="grid grid-cols-3 gap-4 pt-6 border-t">
-
                   {[
                     {
                       icon: Truck,
@@ -233,9 +263,9 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                       text: 'Safe checkout',
                     },
                     {
-                      icon: RefreshCw,
-                      title: 'Easy Returns',
-                      text: 'Simple support',
+                      icon: Leaf,
+                      title: 'Natural Quality',
+                      text: 'Fresh ingredients',
                     },
                   ].map((item, index) => {
                     const Icon = item.icon
@@ -250,8 +280,8 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                       </div>
                     )
                   })}
-
                 </div>
+
               </div>
             </div>
           </div>
@@ -299,16 +329,21 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
                 )}
 
                 {activeTab === 'nutrition' && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {Object.entries(product.nutrition).map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="p-4 rounded-xl bg-amber-50 border border-amber-100"
-                      >
-                        <p className="text-sm text-gray-600 capitalize">{key}</p>
-                        <p className="font-semibold text-amber-700">{value}</p>
-                      </div>
-                    ))}
+                  <div className="overflow-x-auto">
+                    <table className="w-full border border-gray-200 rounded-xl overflow-hidden">
+                      <tbody>
+                        {product.nutrition.map((item, index) => (
+                          <tr key={index} className="border-b last:border-none">
+                            <td className="px-4 py-3 font-medium text-gray-700 bg-gray-50">
+                              {item.nutrient}
+                            </td>
+                            <td className="px-4 py-3 text-amber-700 font-semibold">
+                              {item.value}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 )}
 

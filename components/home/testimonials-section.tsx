@@ -1,28 +1,60 @@
-import { testimonials } from '@/lib/data'
+const testimonials = [
+  {
+    id: '1',
+    name: 'Priya Singh',
+    message:
+      'Nut8Bites has become my favorite healthy snack. The quality, freshness, and authentic taste are excellent.',
+    rating: 5,
+  },
+  {
+    id: '2',
+    name: 'Rahul Patel',
+    message:
+      'Very fresh products and excellent peanut flavor. The roasted varieties are especially addictive.',
+    rating: 5,
+  },
+  {
+    id: '3',
+    name: 'Anjali Mehta',
+    message:
+      'Perfect for daily snacking. It feels natural, premium, and much healthier than packaged snacks.',
+    rating: 4,
+  },
+  {
+    id: '4',
+    name: 'Vikram Kumar',
+    message:
+      'The peanut butter quality is outstanding and tastes genuinely homemade.',
+    rating: 5,
+  },
+]
 
 export function TestimonialsSection() {
   return (
-    <section className="py-16 md:py-20 bg-white">
+    <section className="py-16 md:py-20 bg-gradient-to-b from-white to-amber-50/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+        {/* Heading */}
         <div className="text-center mb-14">
           <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Loved by Our Community
           </h2>
 
-          <p className="text-lg text-gray-600">
-            See what our customers have to say
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+            Real feedback from customers who enjoy Nut8Bites every day.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
 
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.id}
               className="
-                p-7 md:p-8 rounded-2xl border border-gray-200 bg-white
-                shadow-sm hover:shadow-xl hover:-translate-y-1
+                bg-white border border-amber-100 rounded-2xl
+                p-6 md:p-8 shadow-sm
+                hover:shadow-xl hover:-translate-y-1
                 transition-all duration-300
               "
             >
@@ -49,7 +81,11 @@ export function TestimonialsSection() {
 
               {/* Customer */}
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-amber-600 flex items-center justify-center text-white font-semibold">
+                <div className="
+                  w-11 h-11 rounded-full bg-amber-600
+                  flex items-center justify-center
+                  text-white font-semibold
+                ">
                   {testimonial.name[0]}
                 </div>
 

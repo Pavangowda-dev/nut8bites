@@ -1,46 +1,51 @@
-import { Zap, Leaf, Heart, Sparkles } from 'lucide-react'
+import { Award, Flame, Microscope, Users } from 'lucide-react'
 
 const features = [
   {
-    icon: Zap,
-    title: 'High Protein Snacks',
-    description: 'Energy-packed nutrition for active lifestyles',
+    icon: Award,
+    title: 'Heritage Grade Peanuts',
+    description:
+      'Hand-picked and manually graded, organically sourced from premium Chintamani peanuts.',
   },
   {
-    icon: Leaf,
-    title: 'Natural Ingredients',
-    description: 'Made without artificial additives or preservatives',
+    icon: Flame,
+    title: 'Bold Roast Aroma',
+    description:
+      'Traditional wood-fired, hand-roasted peanuts that create a richer and more intense aroma.',
   },
   {
-    icon: Heart,
-    title: 'Healthy Snacking',
-    description: 'Pure, clean snacks crafted for everyday wellness',
+    icon: Microscope,
+    title: 'Single-Origin Uniformity',
+    description:
+      'Research-backed evidence shows high oleic content and strong protein profiles.',
   },
   {
-    icon: Sparkles,
-    title: 'Energy Boosting',
-    description: 'Sustain your energy throughout the day naturally',
+    icon: Users,
+    title: 'Women-Led Business',
+    description:
+      'Created and developed by rural women, empowering local communities through every batch.',
   },
 ]
 
 export function WhyChooseSection() {
   return (
-    <section className="py-14 md:py-20 bg-white">
+    <section className="py-14 md:py-20 bg-gradient-to-b from-white to-amber-50/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Heading */}
         <div className="text-center mb-12 md:mb-14">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             Why Choose Nut8Bites?
           </h2>
 
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Healthy snacking made simple with premium ingredients and natural nutrition.
+          <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            Crafted with authentic Chintamani peanuts, traditional roasting methods,
+            and a commitment to quality, nutrition, and rural empowerment.
           </p>
         </div>
 
         {/* Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
 
           {features.map((feature, index) => {
             const Icon = feature.icon
@@ -49,23 +54,35 @@ export function WhyChooseSection() {
               <div
                 key={index}
                 className="
-                  p-4 md:p-6 rounded-2xl border border-gray-200 bg-white
-                  shadow-sm hover:shadow-xl hover:-translate-y-1
+                  group bg-white border border-amber-100 rounded-2xl
+                  p-6 md:p-7 shadow-sm
+                  hover:shadow-xl hover:-translate-y-1
                   transition-all duration-300
                 "
               >
                 {/* Icon */}
-                <div className="w-10 h-10 md:w-12 md:h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-3 md:mb-4">
-                  <Icon className="w-5 h-5 md:w-6 md:h-6 text-amber-600" />
+                <div className="
+                  w-12 h-12 md:w-14 md:h-14
+                  rounded-2xl bg-amber-100
+                  flex items-center justify-center
+                  mb-4
+                  group-hover:bg-amber-600
+                  transition-all duration-300
+                ">
+                  <Icon className="
+                    w-6 h-6 md:w-7 md:h-7 text-amber-600
+                    group-hover:text-white
+                    transition-all duration-300
+                  " />
                 </div>
 
                 {/* Title */}
-                <h3 className="font-semibold text-sm md:text-lg text-gray-900 mb-2 leading-snug">
+                <h3 className="font-semibold text-lg md:text-xl text-gray-900 mb-3 leading-snug">
                   {feature.title}
                 </h3>
 
                 {/* Description */}
-                <p className="text-xs md:text-sm text-gray-600 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   {feature.description}
                 </p>
               </div>

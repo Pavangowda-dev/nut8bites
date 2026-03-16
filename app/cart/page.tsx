@@ -8,9 +8,21 @@ import { Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 
 export default function CartPage() {
-  const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCart()
+  const { cart, removeFromCart, updateQuantity } = useCart()
 
-  const total = getTotalPrice()
+  const getItemPrice = (item: typeof cart[number]) => {
+    return (
+      item.selectedPrice ||
+      item.product.prices?.[item.selectedPack] ||
+      item.product.prices?.[item.product.packSizes[0]] ||
+      0
+    )
+  }
+
+  const total = cart.reduce((sum, item) => {
+    return sum + getItemPrice(item) * item.quantity
+  }, 0)
+
   const shipping = total > 499 ? 0 : 99
   const grandTotal = total + shipping
 
@@ -64,85 +76,100 @@ export default function CartPage() {
               {/* Cart Items */}
               <div className="lg:col-span-2 space-y-6">
 
-                {cart.map((item) => (
-                  <div
-                    key={item.product.id}
-                    className="border border-gray-200 rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-5"
-                  >
-                    {/* Image */}
-                    <div className="w-full sm:w-28 h-28 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
-                      <Image
-                        src={item.product.image}
-                        alt={item.product.name}
-                        width={120}
-                        height={120}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                {cart.map((item) => {
+                  const price = getItemPrice(item)
 
-                    {/* Details */}
-                    <div className="flex-1">
+                  return (
+                    <div
+                      key={`${item.product.id}-${item.selectedPack}`}
+                      className="border border-gray-200 rounded-2xl p-4 md:p-6 flex flex-col sm:flex-row gap-5"
+                    >
+                      {/* Image */}
+                      <div className="w-full sm:w-28 h-28 bg-gray-50 rounded-xl overflow-hidden flex-shrink-0">
+                        <Image
+                          src={item.product.image}
+                          alt={item.product.name}
+                          width={120}
+                          height={120}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
 
-                      <Link
-                        href={`/products/${item.product.id}`}
-                        className="text-lg font-semibold text-gray-900 hover:text-amber-600 transition-colors"
-                      >
-                        {item.product.name}
-                      </Link>
+                      {/* Details */}
+                      <div className="flex-1">
 
-                      <p className="text-sm text-gray-500 mt-1">
-                        {item.product.category}
-                      </p>
+                        <Link
+                          href={`/products/${item.product.id}`}
+                          className="text-lg font-semibold text-gray-900 hover:text-amber-600 transition-colors"
+                        >
+                          {item.product.name}
+                        </Link>
 
-                      <p className="text-xl font-bold text-gray-900 mt-3">
-                        ₹{item.product.price}
-                      </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {item.product.category}
+                        </p>
 
-                      {/* Quantity Controls */}
-                      <div className="flex items-center gap-4 mt-4 flex-wrap">
+                        <p className="text-sm text-amber-600 font-medium mt-1">
+                          {item.selectedPack}
+                        </p>
 
-                        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
-                          <button
-                            onClick={() =>
-                              updateQuantity(
-                                item.product.id,
-                                Math.max(1, item.quantity - 1)
-                              )
-                            }
-                            className="px-4 py-2 text-lg hover:bg-gray-50"
-                          >
-                            −
-                          </button>
+                        <p className="text-xl font-bold text-gray-900 mt-3">
+                          ₹{price}
+                        </p>
 
-                          <div className="px-4 py-2 border-x border-gray-200 min-w-[48px] text-center font-medium">
-                            {item.quantity}
+                        {/* Quantity Controls */}
+                        <div className="flex items-center gap-4 mt-4 flex-wrap">
+
+                          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  Math.max(1, item.quantity - 1),
+                                  item.selectedPack
+                                )
+                              }
+                              className="px-4 py-2 text-lg hover:bg-gray-50"
+                            >
+                              −
+                            </button>
+
+                            <div className="px-4 py-2 border-x border-gray-200 min-w-[48px] text-center font-medium">
+                              {item.quantity}
+                            </div>
+
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.product.id,
+                                  item.quantity + 1,
+                                  item.selectedPack
+                                )
+                              }
+                              className="px-4 py-2 text-lg hover:bg-gray-50"
+                            >
+                              +
+                            </button>
                           </div>
 
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.product.id, item.quantity + 1)
-                            }
-                            className="px-4 py-2 text-lg hover:bg-gray-50"
-                          >
-                            +
-                          </button>
+                          <p className="font-semibold text-gray-900">
+                            ₹{(price * item.quantity).toFixed(2)}
+                          </p>
                         </div>
-
-                        <p className="font-semibold text-gray-900">
-                          ₹{(item.product.price * item.quantity).toFixed(2)}
-                        </p>
                       </div>
-                    </div>
 
-                    {/* Remove */}
-                    <button
-                      onClick={() => removeFromCart(item.product.id)}
-                      className="self-start sm:self-center text-red-500 hover:text-red-600 transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  </div>
-                ))}
+                      {/* Remove */}
+                      <button
+                        onClick={() =>
+                          removeFromCart(item.product.id, item.selectedPack)
+                        }
+                        className="self-start sm:self-center text-red-500 hover:text-red-600 transition-colors"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
+                  )
+                })}
 
                 <Link
                   href="/shop"

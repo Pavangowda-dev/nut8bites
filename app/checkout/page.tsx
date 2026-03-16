@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const { cart, getTotalPrice, clearCart } = useCart()
+  const { cart, clearCart } = useCart()
 
   const [showConfirmation, setShowConfirmation] = useState(false)
 
@@ -28,7 +28,19 @@ export default function CheckoutPage() {
     pincode: '',
   })
 
-  const total = getTotalPrice()
+  const getItemPrice = (item: typeof cart[number]) => {
+    return (
+      item.selectedPrice ||
+      item.product.prices?.[item.selectedPack] ||
+      item.product.prices?.[item.product.packSizes[0]] ||
+      0
+    )
+  }
+
+  const total = cart.reduce((sum, item) => {
+    return sum + getItemPrice(item) * item.quantity
+  }, 0)
+
   const shipping = total > 499 ? 0 : 99
   const grandTotal = total + shipping
 
@@ -86,7 +98,7 @@ export default function CheckoutPage() {
               <p className="text-sm text-gray-700">
                 Order Total:
                 <span className="font-bold text-gray-900 ml-2">
-                  ₹{grandTotal}
+                  ₹{grandTotal.toFixed(2)}
                 </span>
               </p>
 
@@ -120,10 +132,7 @@ export default function CheckoutPage() {
               Your Cart is Empty
             </h1>
 
-            <Link
-              href="/shop"
-              className="text-amber-600 font-medium"
-            >
+            <Link href="/shop" className="text-amber-600 font-medium">
               Continue Shopping
             </Link>
           </div>
@@ -208,7 +217,6 @@ export default function CheckoutPage() {
                   </h2>
 
                   <div className="space-y-4">
-
                     <input
                       type="text"
                       name="address1"
@@ -270,7 +278,6 @@ export default function CheckoutPage() {
                         required
                       />
                     </div>
-
                   </div>
                 </div>
 
@@ -292,7 +299,7 @@ export default function CheckoutPage() {
                     className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
                   >
                     <Lock className="w-5 h-5" />
-                    Pay Now ₹{grandTotal}
+                    Pay Now ₹{grandTotal.toFixed(2)}
                   </button>
                 </div>
 
@@ -309,36 +316,44 @@ export default function CheckoutPage() {
 
                 <div className="space-y-5 mb-6">
 
-                  {cart.map((item) => (
-                    <div
-                      key={item.product.id}
-                      className="flex gap-3"
-                    >
-                      <div className="w-16 h-16 rounded-xl overflow-hidden bg-white border">
-                        <Image
-                          src={item.product.image}
-                          alt={item.product.name}
-                          width={70}
-                          height={70}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                  {cart.map((item) => {
+                    const price = getItemPrice(item)
 
-                      <div className="flex-1">
-                        <p className="font-medium text-sm text-gray-900">
-                          {item.product.name}
+                    return (
+                      <div
+                        key={`${item.product.id}-${item.selectedPack}`}
+                        className="flex gap-3"
+                      >
+                        <div className="w-16 h-16 rounded-xl overflow-hidden bg-white border">
+                          <Image
+                            src={item.product.image}
+                            alt={item.product.name}
+                            width={70}
+                            height={70}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        <div className="flex-1">
+                          <p className="font-medium text-sm text-gray-900">
+                            {item.product.name}
+                          </p>
+
+                          <p className="text-xs text-amber-600">
+                            {item.selectedPack}
+                          </p>
+
+                          <p className="text-xs text-gray-500">
+                            Qty: {item.quantity}
+                          </p>
+                        </div>
+
+                        <p className="font-semibold text-sm text-gray-900">
+                          ₹{(price * item.quantity).toFixed(2)}
                         </p>
-
-                        <p className="text-xs text-gray-500">
-                          Qty: {item.quantity}
-                        </p>
                       </div>
-
-                      <p className="font-semibold text-sm text-gray-900">
-                        ₹{item.product.price * item.quantity}
-                      </p>
-                    </div>
-                  ))}
+                    )
+                  })}
 
                 </div>
 
@@ -346,7 +361,7 @@ export default function CheckoutPage() {
 
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal</span>
-                    <span>₹{total}</span>
+                    <span>₹{total.toFixed(2)}</span>
                   </div>
 
                   <div className="flex justify-between text-gray-700">
@@ -356,7 +371,9 @@ export default function CheckoutPage() {
 
                   <div className="flex justify-between text-xl font-bold pt-3 border-t">
                     <span>Total</span>
-                    <span className="text-amber-600">₹{grandTotal}</span>
+                    <span className="text-amber-600">
+                      ₹{grandTotal.toFixed(2)}
+                    </span>
                   </div>
 
                 </div>
