@@ -14,9 +14,9 @@ export function HeroSection() {
           }}
         />
 
-        {/* Tablet Banner */}
+        {/* Tablet Banner (includes iPad + iPad Pro) */}
         <div
-          className="hidden md:block lg:hidden w-full bg-cover bg-center bg-no-repeat"
+          className="hidden md:block xl:hidden w-full bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('/images/nut8bites-tablet-banner.png')",
             minHeight: '420px',
@@ -25,7 +25,7 @@ export function HeroSection() {
 
         {/* Desktop Banner */}
         <div
-          className="hidden lg:block w-full bg-cover bg-center bg-no-repeat"
+          className="hidden xl:block w-full bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: "url('/images/nut8bites-desktop-banner.png')",
             minHeight: '500px',

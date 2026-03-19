@@ -11,29 +11,29 @@ const faqs = [
     category: 'Products',
     items: [
       {
-        question: 'What are the key ingredients in Nut8Bites products?',
+        question: 'What makes Nut8Bites products special?',
         answer:
-          'Our products are made with premium roasted peanuts, natural spices, jaggery, and seeds. We use only natural ingredients with no artificial additives or preservatives.',
+          'Nut8Bites products are crafted using premium Chintamani peanuts, known for their rich taste, strong aroma, and natural nutritional value. Each batch is freshly prepared using carefully selected ingredients with no preservatives or artificial additives.',
       },
       {
-        question: 'Are Nut8Bites products suitable for vegetarians?',
+        question: 'Are Nut8Bites products homemade?',
         answer:
-          'Yes, all Nut8Bites products are 100% vegetarian. They are made from plant-based ingredients and are perfect for vegetarian diets.',
+          'Yes, our products are freshly prepared in small batches with a focus on hygiene, freshness, and traditional quality.',
       },
       {
-        question: 'Do your products contain allergens?',
+        question: 'Do your products contain preservatives?',
         answer:
-          'All Nut8Bites products contain peanuts. They may also contain traces of other nuts and sesame. Please check the packaging for detailed allergen information.',
+          'No. Nut8Bites products do not contain preservatives, artificial colors, or unnecessary additives.',
       },
       {
-        question: 'How much protein is in each Nut8Bites product?',
+        question: 'Do Nut8Bites products contain allergens?',
         answer:
-          'Our products contain 8-10g of protein per serving, making them excellent for post-workout recovery and sustained energy.',
+          'Yes. All our products contain peanuts. Some products may also include seeds such as sunflower seeds and other natural ingredients. Customers with peanut allergies should avoid consumption.',
       },
       {
-        question: 'Are Nut8Bites products sugar-free?',
+        question: 'Are your products vegetarian?',
         answer:
-          'Most products contain natural sugars from jaggery. We do not use refined sugar or artificial sweeteners. Check individual product nutrition labels for details.',
+          'Yes, all Nut8Bites products are 100% vegetarian and made using plant-based ingredients.',
       },
     ],
   },
@@ -41,29 +41,34 @@ const faqs = [
     category: 'Ordering & Shipping',
     items: [
       {
+        question: 'How long does dispatch take?',
+        answer:
+          'Orders are usually freshly prepared, packed, and dispatched within 24 to 48 business hours after order confirmation.',
+      },
+      {
         question: 'How long does delivery take?',
         answer:
-          'Standard delivery takes 5-7 business days. We also offer express delivery (2-3 business days) for an additional charge. Delivery time may vary by location.',
+          'Delivery usually takes 4 to 8 business days depending on your location and courier availability.',
+      },
+      {
+        question: 'Which courier partners do you use?',
+        answer:
+          'We currently ship through DTDC and India Post depending on service availability for your location.',
       },
       {
         question: 'Do you offer free shipping?',
         answer:
-          'Yes! Free shipping is available on orders above ₹499. For orders below ₹499, shipping cost is ₹99.',
+          'Shipping charges are calculated during checkout. Free shipping is currently not available.',
       },
       {
-        question: 'Can I track my order?',
+        question: 'Do you offer Cash on Delivery?',
         answer:
-          'Yes, you will receive a tracking link via email once your order is dispatched. You can use this to track your package in real-time.',
+          'No. Nut8Bites currently accepts prepaid online payments only.',
       },
       {
-        question: 'Do you ship internationally?',
+        question: 'Do you ship outside India?',
         answer:
-          'Currently, we offer India-wide shipping only. We are working on expanding to international markets soon.',
-      },
-      {
-        question: 'What is your return policy?',
-        answer:
-          'We offer a 30-day return policy. If you are not satisfied with your purchase, you can return it for a full refund or exchange.',
+          'Currently, we ship only within India.',
       },
     ],
   },
@@ -71,64 +76,79 @@ const faqs = [
     category: 'Storage & Shelf Life',
     items: [
       {
-        question: 'How should I store Nut8Bites products?',
-        answer:
-          'Store in a cool, dry place away from direct sunlight. For peanut butter, refrigerate after opening and consume within 2 weeks for best quality.',
-      },
-      {
         question: 'What is the shelf life of Nut8Bites products?',
         answer:
-          'Our products have a shelf life of 6-12 months from the date of manufacture. Check the packaging for the exact expiry date.',
+          'Most Nut8Bites products have an approximate shelf life of 4 months from the date of manufacture when stored properly.',
       },
       {
-        question: 'Can I freeze Nut8Bites products?',
+        question: 'How should I store peanut butter?',
         answer:
-          'Yes, you can freeze peanut butter and laddoos for extended storage. Thaw at room temperature before consuming.',
-      },
-    ],
-  },
-  {
-    category: 'Health & Nutrition',
-    items: [
-      {
-        question: 'Are Nut8Bites products good for fitness enthusiasts?',
-        answer:
-          'Absolutely! With 8-10g of protein per serving, our products are perfect for muscle recovery and sustained energy for fitness enthusiasts.',
+          'Store in a cool, dry place away from direct sunlight. Refrigeration is not necessary, but always keep the jar tightly closed after use.',
       },
       {
-        question: 'Can I consume Nut8Bites products if I am diabetic?',
+        question: 'Is oil separation normal in peanut butter?',
         answer:
-          'We recommend consulting with your healthcare provider before consuming products containing jaggery if you have diabetes. We have products with minimal sugar options.',
+          'Yes. Natural oil separation is completely normal in preservative-free peanut butter. Stir well before use.',
       },
       {
-        question: 'Are Nut8Bites products organic?',
+        question: 'Are products made fresh after order?',
         answer:
-          'While we source premium quality peanuts and natural ingredients, not all products are certified organic. We focus on clean, natural ingredients without artificial additives.',
-      },
-      {
-        question: 'What are the health benefits of peanuts?',
-        answer:
-          'Peanuts are rich in protein, healthy fats, fiber, vitamins, and minerals. They support heart health, muscle growth, and provide sustained energy.',
+          'Yes. Our products are prepared in fresh batches after order confirmation to maintain freshness and quality.',
       },
     ],
   },
   {
-    category: 'Payment & Billing',
+    category: 'Nutrition & Ingredients',
     items: [
       {
-        question: 'What payment methods do you accept?',
+        question: 'What ingredients are used in Nut8Bites peanut butter?',
         answer:
-          'We accept all major credit cards, debit cards, and digital payment methods. Our checkout process is secure and encrypted.',
+          'Our classic peanut butter is made using 100% roasted peanuts. Some variants may include seeds such as sunflower seeds and other natural seed blends.',
       },
       {
-        question: 'Is my payment information secure?',
+        question: 'Does Nut8Bites use sugar or jaggery?',
         answer:
-          'Yes, all transactions are processed through secure, encrypted connections. We never store your complete card details.',
+          'No. Our peanut butter products do not contain added sugar, jaggery, or artificial sweeteners unless specifically mentioned.',
       },
       {
-        question: 'Do you offer discounts or promotional codes?',
+        question: 'Are Nut8Bites products protein-rich?',
         answer:
-          'Yes, we regularly offer discounts and promotional codes. Subscribe to our newsletter to stay updated on special offers.',
+          'Yes. Peanuts are naturally rich in plant protein, healthy fats, and essential nutrients, making them suitable for healthy snacking and active lifestyles.',
+      },
+      {
+        question: 'Are your products suitable for fitness-focused diets?',
+        answer:
+          'Yes. Nut8Bites products are popular among customers looking for natural protein-rich snack options.',
+      },
+    ],
+  },
+  {
+    category: 'Refunds & Support',
+    items: [
+      {
+        question: 'Can I return food products?',
+        answer:
+          'No. Due to food safety reasons, returns are not accepted once delivered.',
+      },
+      {
+        question: 'When is a refund allowed?',
+        answer:
+          'Refunds are considered only for damaged products, leaked packaging, or incorrect items delivered.',
+      },
+      {
+        question: 'Is unboxing video required for refund claims?',
+        answer:
+          'Yes. A complete unboxing video is mandatory for all refund requests.',
+      },
+      {
+        question: 'Can I cancel my order?',
+        answer:
+          'Orders can only be cancelled before dispatch. Once shipped, cancellation is not possible.',
+      },
+      {
+        question: 'How can I contact Nut8Bites support?',
+        answer:
+          'You can contact us through our contact page or email us at nut8bytes@gmail.com.',
       },
     ],
   },
@@ -148,7 +168,6 @@ export default function FAQPage() {
       <Header />
 
       <main className="flex-1">
-        {/* Breadcrumb */}
         <div className="bg-gray-50 border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <nav className="flex gap-2 text-sm">
@@ -161,7 +180,6 @@ export default function FAQPage() {
           </div>
         </div>
 
-        {/* Hero Section */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
@@ -169,20 +187,19 @@ export default function FAQPage() {
                 Frequently Asked Questions
               </h1>
               <p className="text-xl text-gray-700">
-                Find answers to common questions about our products, shipping, and more
+                Everything you need to know about Nut8Bites products, freshness, delivery, and support.
               </p>
             </div>
           </div>
         </section>
 
-        {/* FAQ Accordion */}
         <section className="py-16 md:py-24 bg-gray-50">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="space-y-8">
               {faqs.map((section, sectionIndex) => (
                 <div key={sectionIndex}>
                   <h2 className="font-serif text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                    <div className="w-1 h-8 bg-amber-600 hover:bg-amber-700 rounded"></div>
+                    <div className="w-1 h-8 bg-amber-600 rounded"></div>
                     {section.category}
                   </h2>
 
@@ -225,30 +242,21 @@ export default function FAQPage() {
           </div>
         </section>
 
-        {/* Contact CTA */}
         <section className="py-16 md:py-24 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Still Have Questions?
             </h2>
             <p className="text-xl text-gray-700 mb-8 leading-relaxed">
-              Can't find the answer you're looking for? Our support team is here to help.
+              Our team is happy to help with product details, delivery questions, and order support.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-serif font-bold hover:opacity-90 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-serif font-bold transition-all"
               >
                 Contact Us
               </Link>
-              <a
-                href="https://wa.me/918800000000"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-green-500 text-green-600 rounded-lg font-serif font-bold hover:bg-green-50 transition-all"
-              >
-                Chat on WhatsApp
-              </a>
             </div>
           </div>
         </section>

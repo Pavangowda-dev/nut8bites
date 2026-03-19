@@ -2,8 +2,9 @@
 
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
-import { Mail, Phone, MapPin, MessageSquare } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import { useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function ContactPage() {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -23,14 +25,24 @@ export default function ContactPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    console.log('Form submitted:', formData)
+    setLoading(true)
 
-    setSubmitted(true)
+    const { error } = await supabase.from('contact_messages').insert([
+      {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+      },
+    ])
 
-    setTimeout(() => {
+    if (!error) {
+      setSubmitted(true)
+
       setFormData({
         name: '',
         email: '',
@@ -38,8 +50,15 @@ export default function ContactPage() {
         subject: '',
         message: '',
       })
-      setSubmitted(false)
-    }, 3000)
+
+      setTimeout(() => {
+        setSubmitted(false)
+      }, 3000)
+    } else {
+      alert('Something went wrong. Please try again.')
+    }
+
+    setLoading(false)
   }
 
   return (
@@ -48,83 +67,28 @@ export default function ContactPage() {
 
       <main className="flex-1">
 
-        {/* Hero */}
         <section className="py-16 md:py-20 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div className="text-center max-w-3xl mx-auto mb-14">
+            <div className="text-center max-w-3xl mx-auto">
               <h1 className="font-serif text-5xl md:text-6xl font-bold text-gray-900 mb-6">
                 Get in Touch
               </h1>
 
               <p className="text-lg md:text-xl text-gray-700 leading-relaxed">
-                We’d love to hear from you. Reach out for questions, support, or feedback.
+                We’d love to hear from you. Reach out for product questions, order support, or feedback.
               </p>
             </div>
 
-            {/* Contact Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-              {[
-                {
-                  icon: Mail,
-                  title: 'Email',
-                  value: 'nut8bites@gmail.com',
-                  link: 'mailto:nut8bites@gmail.com',
-                },
-                {
-                  icon: Phone,
-                  title: 'Phone',
-                  value: '+91 9901475158',
-                  link: 'tel:+919901475158',
-                },
-                {
-                  icon: MapPin,
-                  title: 'Location',
-                  value: 'India-wide shipping available',
-                },
-              ].map((item, index) => {
-                const Icon = item.icon
-
-                return (
-                  <div
-                    key={index}
-                    className="p-7 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white shadow-sm hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
-                      <Icon className="w-6 h-6 text-amber-600" />
-                    </div>
-
-                    <h3 className="font-semibold text-lg text-gray-900 mb-2">
-                      {item.title}
-                    </h3>
-
-                    {item.link ? (
-                      <a
-                        href={item.link}
-                        className="text-amber-600 hover:text-amber-700 font-medium transition-colors"
-                      >
-                        {item.value}
-                      </a>
-                    ) : (
-                      <p className="text-gray-600">{item.value}</p>
-                    )}
-                  </div>
-                )
-              })}
-
-            </div>
           </div>
         </section>
 
-        {/* Form + Info */}
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-              {/* Form */}
-              <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
+              <div className="order-1 lg:order-1 bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
 
                 <h2 className="font-serif text-2xl font-bold text-gray-900 mb-6">
                   Send us a Message
@@ -198,19 +162,18 @@ export default function ContactPage() {
 
                     <button
                       type="submit"
-                      className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-all duration-300"
+                      disabled={loading}
+                      className="w-full py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-semibold transition-all duration-300 disabled:opacity-60"
                     >
-                      Send Message
+                      {loading ? 'Sending...' : 'Send Message'}
                     </button>
 
                   </form>
                 )}
               </div>
 
-              {/* Right Info */}
-              <div className="space-y-6">
+              <div className="order-2 lg:order-2 space-y-6">
 
-                {/* WhatsApp */}
                 <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
                   <div className="flex items-start gap-4">
 
@@ -224,11 +187,11 @@ export default function ContactPage() {
                       </h3>
 
                       <p className="text-gray-600 mb-4">
-                        Chat directly with us for quick support and product assistance.
+                        Chat directly with us for quick support and order assistance.
                       </p>
 
                       <a
-                        href="https://wa.me/919901475158"
+                        href="https://wa.me/919902714771"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex px-5 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-all duration-300"
@@ -240,7 +203,6 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* Hours */}
                 <div className="bg-white rounded-2xl p-8 border border-gray-200 shadow-sm">
                   <h3 className="font-semibold text-lg text-gray-900 mb-4">
                     Business Hours
@@ -269,6 +231,7 @@ export default function ContactPage() {
                 </div>
 
               </div>
+
             </div>
           </div>
         </section>

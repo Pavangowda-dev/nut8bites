@@ -35,11 +35,11 @@ export const products: Product[] = [
     id: 'super-seeds-pb',
     name: 'Super Seeds Peanut Butter',
     description:
-      'Crunchy roasted peanut butter blended with nutrient-rich super seeds for added texture, taste, and nutrition.',
-    shortDescription: 'Crunchy peanut butter blended with super seeds.',
+      'Roasted peanut butter with sunflower seeds, pumpkin seeds, chia seeds, melon seeds, and raisins for added texture, taste, and nutrition.',
+    shortDescription: 'Roasted peanut butter enriched with super seeds and raisins.',
     prices: {
-      '500 g': 549,
-      '1 kg': 999,
+      '500 g': 300,
+      '1 kg': 600,
     },
     image: '/images/Product-images/super-seeds.png',
     category: 'Peanut Butter',
@@ -73,8 +73,8 @@ export const products: Product[] = [
       'Pure crunchy peanut butter made from 100% roasted peanuts with no unnecessary additives.',
     shortDescription: 'Pure crunchy peanut butter.',
     prices: {
-      '500 g': 449,
-      '1 kg': 849,
+      '500 g': 250,
+      '1 kg': 500,
     },
     image: '/images/Product-images/crunchy.png',
     category: 'Peanut Butter',
@@ -82,7 +82,7 @@ export const products: Product[] = [
     ingredients: ['100% Roasted Peanuts'],
     packSizes: ['500 g', '1 kg'],
     nutrition: [
-      { nutrient: 'Protein', value: '7g / 2 tbsp' },
+      { nutrient: 'Protein', value: '8g / 2 tbsp' },
       { nutrient: 'Fat', value: '15g / 2 tbsp' },
       { nutrient: 'Carbohydrates', value: '4g / 2 tbsp' },
       { nutrient: 'Fiber', value: '2g / 2 tbsp' },
@@ -101,8 +101,8 @@ export const products: Product[] = [
       'Traditional jaggery-based peanut chikki crafted into bite-sized crunchy snacks that deliver authentic homemade taste.',
     shortDescription: 'Traditional bite-sized peanut chikki.',
     prices: {
-      '250 g': 299,
-      '500 g': 549,
+      '250 g': 150,
+      '500 g': 300,
     },
     image: '/images/Product-images/chikki.png',
     category: 'Snacks',
@@ -115,7 +115,7 @@ export const products: Product[] = [
     ],
     packSizes: ['250 g', '500 g'],
     nutrition: [
-      { nutrient: 'Protein', value: '6g / 30g' },
+      { nutrient: 'Protein', value: '8g / 30g' },
       { nutrient: 'Fat', value: '12g / 30g' },
       { nutrient: 'Carbohydrates', value: '18g / 30g' },
       { nutrient: 'Fiber', value: '2g / 30g' },
@@ -127,14 +127,14 @@ export const products: Product[] = [
   },
 
   {
-    id: 'green-kadlebeja',
-    name: 'Green Kadlekayi',
+    id: 'green-kadalebeeja',
+    name: 'Green kadalebeeja',
     description:
       'A flavorful traditional peanut snack seasoned with fresh green chilli and curry leaves.',
     shortDescription: 'Traditional green chilli peanut snack.',
     prices: {
-      '250 g': 379,
-      '500 g': 699,
+      '250 g': 150,
+      '500 g': 300,
     },
     image: '/images/Product-images/green-peanut.png',
     category: 'Roasted Peanuts',
@@ -160,14 +160,14 @@ export const products: Product[] = [
   },
 
   {
-    id: 'red-kadlebeja',
-    name: 'Red Kadlekayi',
+    id: 'red-kadalebeeja',
+    name: 'Red kadalebeeja',
     description:
       'A spicy roasted peanut snack prepared with red chilli and cumin for bold flavor.',
     shortDescription: 'Spicy roasted red peanut snack.',
     prices: {
-      '250 g': 349,
-      '500 g': 649,
+      '250 g': 150,
+      '500 g': 300,
     },
     image: '/images/Product-images/red-peanut.png',
     category: 'Roasted Peanuts',
@@ -192,14 +192,14 @@ export const products: Product[] = [
   },
 
   {
-    id: 'salt-roasted-kadlebeja',
+    id: 'salt-roasted-kadalebeeja',
     name: 'Salt Roasted Peanuts',
     description:
       'Classic roasted peanuts lightly seasoned with sea salt for a simple and crunchy snack.',
     shortDescription: 'Salt roasted peanuts.',
     prices: {
-      '250 g': 329,
-      '500 g': 599,
+      '250 g': 150,
+      '500 g': 300,
     },
     image: '/images/Product-images/Salted-peanut.png',
     category: 'Roasted Peanuts',
@@ -225,8 +225,8 @@ export const products: Product[] = [
       'Nutritious energy ladoos made with peanuts, dates, seeds, and dry fruits for natural energy.',
     shortDescription: 'Nutritious energy ladoos.',
     prices: {
-      '250 g': 399,
-      '500 g': 749,
+      '250 g': 150,
+      '500 g': 300,
     },
     image: '/images/Product-images/laddoo.png',
     category: 'Energy Snacks',
@@ -243,7 +243,7 @@ export const products: Product[] = [
     ],
     packSizes: ['250 g', '500 g'],
     nutrition: [
-      { nutrient: 'Protein', value: '7g / ladoo' },
+      { nutrient: 'Protein', value: '8g / ladoo' },
       { nutrient: 'Fat', value: '12g / ladoo' },
       { nutrient: 'Carbohydrates', value: '22g / ladoo' },
       { nutrient: 'Fiber', value: '2g / ladoo' },

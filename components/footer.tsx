@@ -80,6 +80,11 @@ export function Footer() {
                   Terms & Conditions
                 </Link>
               </li>
+              <li>
+                <Link href="/cancellation-policy" className="hover:text-amber-300 transition-colors">
+                cancellation policy
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -97,7 +102,7 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="tel:+919901475158"
+                  href="tel:+919902714771"
                   className="hover:text-amber-300 transition-colors"
                 >
                   +91 9901475158

@@ -6,14 +6,15 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { useCart } from '@/lib/cart-context'
-import { Lock, CheckCircle } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
+import { Lock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { cart, clearCart } = useCart()
 
-  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -51,7 +52,17 @@ export default function CheckoutPage() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handlePayNow = (e: React.FormEvent) => {
+  const loadRazorpay = () => {
+    return new Promise<boolean>((resolve) => {
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.onload = () => resolve(true)
+      script.onerror = () => resolve(false)
+      document.body.appendChild(script)
+    })
+  }
+
+  const handlePayNow = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (
@@ -67,58 +78,156 @@ export default function CheckoutPage() {
       return
     }
 
-    setShowConfirmation(true)
+    setLoading(true)
 
-    setTimeout(() => {
-      clearCart()
-      setTimeout(() => {
-        router.push('/')
-      }, 2500)
-    }, 1000)
-  }
+    const res = await loadRazorpay()
 
-  if (showConfirmation) {
-    return (
-      <div className="flex flex-col min-h-screen">
-        <Header />
+    if (!res) {
+      alert('Razorpay SDK failed to load. Please check your internet connection.')
+      setLoading(false)
+      return
+    }
 
-        <main className="flex-1 flex items-center justify-center px-4 py-20">
-          <div className="max-w-md w-full bg-white border border-gray-200 rounded-2xl shadow-sm p-8 text-center">
-            <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-6" />
+    try {
+      const orderRes = await fetch('/api/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: grandTotal,
+        }),
+      })
 
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
-              Order Confirmed
-            </h1>
+      if (!orderRes.ok) {
+        const err = await orderRes.text()
+        throw new Error(`Order creation failed: ${err}`)
+      }
 
-            <p className="text-gray-600 mb-6">
-              Thank you for your purchase. Your order has been placed successfully.
-            </p>
+      const order = await orderRes.json()
 
-            <div className="bg-gray-50 rounded-xl p-4 mb-6">
-              <p className="text-sm text-gray-700">
-                Order Total:
-                <span className="font-bold text-gray-900 ml-2">
-                  ₹{grandTotal.toFixed(2)}
-                </span>
-              </p>
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Nut8Bites',
+        description: 'Order Payment',
+        order_id: order.id,
+        handler: async function (response: any) {
+          // Step 1: Verify payment signature first (critical security step)
+          const verifyRes = await fetch('/api/verify-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          })
 
-              <p className="text-sm text-gray-600 mt-2">
-                Estimated Delivery: 3–5 Business Days
-              </p>
-            </div>
+          const verifyData = await verifyRes.json()
 
-            <Link
-              href="/"
-              className="inline-block px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold transition-all"
-            >
-              Continue Shopping
-            </Link>
-          </div>
-        </main>
+          if (!verifyData.success) {
+            setLoading(false)
+            alert('Payment verification failed. Please contact support.')
+            return
+          }
 
-        <Footer />
-      </div>
-    )
+          // Step 2: Save order only after successful verification
+          const customerName = `${formData.firstName} ${formData.lastName}`.trim()
+
+          const { data: orderData, error: orderError } = await supabase
+            .from('orders')
+            .insert([
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                payment_status: 'paid',
+
+                customer_name: customerName,
+                email: formData.email || null,
+                phone: formData.phone,
+
+                address1: formData.address1,
+                address2: formData.address2 || null,
+                city: formData.city,
+                state: formData.state,
+                country: formData.country,
+                pincode: formData.pincode,
+
+                subtotal: total,
+                shipping,
+                total: grandTotal,
+
+                order_status: 'confirmed',
+              },
+            ])
+            .select()
+            .single()
+
+          if (orderError || !orderData) {
+            setLoading(false)
+            console.error('Order insert error:', orderError)
+            alert('Failed to save order details. Please contact support.')
+            return
+          }
+
+          // Save order items
+          const items = cart.map((item) => ({
+            order_id: orderData.id,
+            product_id: item.product.id,
+            product_name: item.product.name,
+            pack_size: item.selectedPack || null,
+            quantity: item.quantity,
+            price: getItemPrice(item),
+          }))
+
+          const { error: itemsError } = await supabase
+            .from('order_items')
+            .insert(items)
+
+          if (itemsError) {
+            setLoading(false)
+            console.error('Order items insert error:', itemsError)
+            alert('Failed to save order items. Please contact support.')
+            return
+          }
+
+          // Success — redirect to dedicated success page
+          setLoading(false)
+          clearCart()
+          router.push(`/checkout/success?order=${orderData.id}`)
+        },
+        prefill: {
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email || undefined,
+          contact: formData.phone,
+        },
+        theme: {
+          color: '#d97706',
+        },
+        modal: {
+          ondismiss: function () {
+            setLoading(false)
+          },
+        },
+      }
+
+      const paymentObject = new (window as any).Razorpay(options)
+
+      paymentObject.on('payment.failed', function (response: any) {
+        alert('Payment failed: ' + (response.error.description || 'Unknown error'))
+        setLoading(false)
+      })
+
+      paymentObject.open()
+    } catch (err: any) {
+      console.error('Payment flow error:', err)
+      alert('Payment initiation failed. Please try again.\n' + (err.message || ''))
+      setLoading(false)
+    }
   }
 
   if (cart.length === 0) {
@@ -149,18 +258,15 @@ export default function CheckoutPage() {
 
       <main className="flex-1 bg-white py-10 md:py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-10">
             Secure Checkout
           </h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
             {/* Form */}
             <div className="lg:col-span-2">
               <form onSubmit={handlePayNow} className="space-y-8">
-
-                {/* Customer */}
+                {/* Customer Details */}
                 <div className="border border-gray-200 rounded-2xl p-6 md:p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
                     Customer Details
@@ -170,7 +276,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="firstName"
-                      placeholder="First Name"
+                      placeholder="First Name *"
                       value={formData.firstName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -180,7 +286,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="lastName"
-                      placeholder="Last Name"
+                      placeholder="Last Name *"
                       value={formData.lastName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -201,7 +307,7 @@ export default function CheckoutPage() {
                     <input
                       type="tel"
                       name="phone"
-                      placeholder="Phone Number"
+                      placeholder="Phone Number *"
                       value={formData.phone}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -210,7 +316,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Address */}
+                {/* Shipping Address */}
                 <div className="border border-gray-200 rounded-2xl p-6 md:p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">
                     Shipping Address
@@ -220,7 +326,7 @@ export default function CheckoutPage() {
                     <input
                       type="text"
                       name="address1"
-                      placeholder="Address Line 1"
+                      placeholder="Address Line 1 *"
                       value={formData.address1}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -240,7 +346,7 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         name="city"
-                        placeholder="City"
+                        placeholder="City *"
                         value={formData.city}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -250,7 +356,7 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         name="state"
-                        placeholder="State"
+                        placeholder="State *"
                         value={formData.state}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -271,7 +377,7 @@ export default function CheckoutPage() {
                       <input
                         type="text"
                         name="pincode"
-                        placeholder="Pincode"
+                        placeholder="Pincode *"
                         value={formData.pincode}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
@@ -296,32 +402,30 @@ export default function CheckoutPage() {
 
                   <button
                     type="submit"
-                    className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2"
+                    disabled={loading}
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Lock className="w-5 h-5" />
-                    Pay Now ₹{grandTotal.toFixed(2)}
+                    {loading ? 'Processing...' : `Pay Now ₹${grandTotal.toFixed(2)}`}
                   </button>
                 </div>
-
               </form>
             </div>
 
-            {/* Summary */}
+            {/* Order Summary */}
             <div>
               <div className="sticky top-24 border border-gray-200 rounded-2xl p-6 bg-gray-50">
-
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   Order Summary
                 </h3>
 
                 <div className="space-y-5 mb-6">
-
                   {cart.map((item) => {
                     const price = getItemPrice(item)
 
                     return (
                       <div
-                        key={`${item.product.id}-${item.selectedPack}`}
+                        key={`${item.product.id}-${item.selectedPack || 'default'}`}
                         className="flex gap-3"
                       >
                         <div className="w-16 h-16 rounded-xl overflow-hidden bg-white border">
@@ -338,11 +442,9 @@ export default function CheckoutPage() {
                           <p className="font-medium text-sm text-gray-900">
                             {item.product.name}
                           </p>
-
                           <p className="text-xs text-amber-600">
-                            {item.selectedPack}
+                            {item.selectedPack || 'Default'}
                           </p>
-
                           <p className="text-xs text-gray-500">
                             Qty: {item.quantity}
                           </p>
@@ -354,11 +456,9 @@ export default function CheckoutPage() {
                       </div>
                     )
                   })}
-
                 </div>
 
                 <div className="space-y-3 border-t pt-4">
-
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal</span>
                     <span>₹{total.toFixed(2)}</span>
@@ -375,12 +475,9 @@ export default function CheckoutPage() {
                       ₹{grandTotal.toFixed(2)}
                     </span>
                   </div>
-
                 </div>
-
               </div>
             </div>
-
           </div>
         </div>
       </main>
