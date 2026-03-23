@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { useCart } from '@/lib/cart-context'
-import { supabase } from '@/lib/supabase'
 import { Lock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -38,12 +37,12 @@ export default function CheckoutPage() {
     )
   }
 
-  const total = cart.reduce((sum, item) => {
+  const subtotal = cart.reduce((sum, item) => {
     return sum + getItemPrice(item) * item.quantity
   }, 0)
 
-  const shipping = total > 499 ? 0 : 99
-  const grandTotal = total + shipping
+  const shipping = subtotal > 499 ? 0 : 99
+  const grandTotal = subtotal + shipping
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -80,41 +79,69 @@ export default function CheckoutPage() {
 
     setLoading(true)
 
-    const res = await loadRazorpay()
+    const razorpayLoaded = await loadRazorpay()
 
-    if (!res) {
+    if (!razorpayLoaded) {
       alert('Razorpay SDK failed to load. Please check your internet connection.')
       setLoading(false)
       return
     }
 
     try {
+      // ────────────────────────────────────────────────
+      // Send FULL order data to backend
+      // ────────────────────────────────────────────────
       const orderRes = await fetch('/api/create-order', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          amount: grandTotal,
+          customer_name: `${formData.firstName} ${formData.lastName}`.trim(),
+          email: formData.email || null,
+          phone: formData.phone,
+          address1: formData.address1,
+          address2: formData.address2 || null,
+          city: formData.city,
+          state: formData.state,
+          country: formData.country,
+          pincode: formData.pincode,
+
+          items: cart.map((item) => ({
+            product_id: item.product.id,
+            product_name: item.product.name,
+            pack_size: item.selectedPack || null,
+            quantity: item.quantity,
+            price: getItemPrice(item),
+          })),
+
+          subtotal,
+          shipping,
+          total: grandTotal,
         }),
       })
 
       if (!orderRes.ok) {
-        const err = await orderRes.text()
-        throw new Error(`Order creation failed: ${err}`)
+        const errText = await orderRes.text()
+        throw new Error(`Order creation failed: ${errText}`)
       }
 
-      const order = await orderRes.json()
+      const { success, order_id, razorpay_order } = await orderRes.json()
+
+      if (!success || !razorpay_order?.id) {
+        throw new Error('Invalid order response from server')
+      }
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: order.amount,
-        currency: order.currency,
+        amount: razorpay_order.amount,
+        currency: razorpay_order.currency,
         name: 'Nut8Bites',
         description: 'Order Payment',
-        order_id: order.id,
+        order_id: razorpay_order.id,
+
         handler: async function (response: any) {
-          // Step 1: Verify payment signature first (critical security step)
+          // Verify signature first (very important)
           const verifyRes = await fetch('/api/verify-payment', {
             method: 'POST',
             headers: {
@@ -135,79 +162,22 @@ export default function CheckoutPage() {
             return
           }
 
-          // Step 2: Save order only after successful verification
-          const customerName = `${formData.firstName} ${formData.lastName}`.trim()
-
-          const { data: orderData, error: orderError } = await supabase
-            .from('orders')
-            .insert([
-              {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                payment_status: 'paid',
-
-                customer_name: customerName,
-                email: formData.email || null,
-                phone: formData.phone,
-
-                address1: formData.address1,
-                address2: formData.address2 || null,
-                city: formData.city,
-                state: formData.state,
-                country: formData.country,
-                pincode: formData.pincode,
-
-                subtotal: total,
-                shipping,
-                total: grandTotal,
-
-                order_status: 'confirmed',
-              },
-            ])
-            .select()
-            .single()
-
-          if (orderError || !orderData) {
-            setLoading(false)
-            console.error('Order insert error:', orderError)
-            alert('Failed to save order details. Please contact support.')
-            return
-          }
-
-          // Save order items
-          const items = cart.map((item) => ({
-            order_id: orderData.id,
-            product_id: item.product.id,
-            product_name: item.product.name,
-            pack_size: item.selectedPack || null,
-            quantity: item.quantity,
-            price: getItemPrice(item),
-          }))
-
-          const { error: itemsError } = await supabase
-            .from('order_items')
-            .insert(items)
-
-          if (itemsError) {
-            setLoading(false)
-            console.error('Order items insert error:', itemsError)
-            alert('Failed to save order items. Please contact support.')
-            return
-          }
-
-          // Success — redirect to dedicated success page
+          // ─── Payment verified → success flow ───
           setLoading(false)
           clearCart()
-          router.push(`/checkout/success?order=${orderData.id}`)
+          router.push(`/checkout/success?order=${order_id}`)
         },
+
         prefill: {
           name: `${formData.firstName} ${formData.lastName}`.trim(),
           email: formData.email || undefined,
           contact: formData.phone,
         },
+
         theme: {
           color: '#d97706',
         },
+
         modal: {
           ondismiss: function () {
             setLoading(false)
@@ -234,19 +204,16 @@ export default function CheckoutPage() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
-
         <main className="flex-1 flex items-center justify-center px-4">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               Your Cart is Empty
             </h1>
-
             <Link href="/shop" className="text-amber-600 font-medium">
               Continue Shopping
             </Link>
           </div>
         </main>
-
         <Footer />
       </div>
     )
@@ -263,7 +230,7 @@ export default function CheckoutPage() {
           </h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            {/* Form */}
+            {/* Left - Form */}
             <div className="lg:col-span-2">
               <form onSubmit={handlePayNow} className="space-y-8">
                 {/* Customer Details */}
@@ -282,7 +249,6 @@ export default function CheckoutPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
                       required
                     />
-
                     <input
                       type="text"
                       name="lastName"
@@ -303,7 +269,6 @@ export default function CheckoutPage() {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
                     />
-
                     <input
                       type="tel"
                       name="phone"
@@ -332,7 +297,6 @@ export default function CheckoutPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
                       required
                     />
-
                     <input
                       type="text"
                       name="address2"
@@ -352,7 +316,6 @@ export default function CheckoutPage() {
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:ring-2 focus:ring-amber-600"
                         required
                       />
-
                       <input
                         type="text"
                         name="state"
@@ -387,7 +350,7 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Payment */}
+                {/* Payment Section */}
                 <div className="border border-gray-200 rounded-2xl p-6 md:p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <Lock className="w-5 h-5 text-green-600" />
@@ -412,7 +375,7 @@ export default function CheckoutPage() {
               </form>
             </div>
 
-            {/* Order Summary */}
+            {/* Right - Order Summary */}
             <div>
               <div className="sticky top-24 border border-gray-200 rounded-2xl p-6 bg-gray-50">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
@@ -461,7 +424,7 @@ export default function CheckoutPage() {
                 <div className="space-y-3 border-t pt-4">
                   <div className="flex justify-between text-gray-700">
                     <span>Subtotal</span>
-                    <span>₹{total.toFixed(2)}</span>
+                    <span>₹{subtotal.toFixed(2)}</span>
                   </div>
 
                   <div className="flex justify-between text-gray-700">
