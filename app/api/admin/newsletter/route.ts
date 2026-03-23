@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
 export async function GET() {
   try {
-    const { data, error } = await supabaseAdmin
+    const supabase = getSupabaseAdmin() // ✅ FIXED
+
+    const { data, error } = await supabase
       .from('newsletter')
       .select('*')
       .order('created_at', { ascending: false })
@@ -18,7 +20,7 @@ export async function GET() {
 
     return NextResponse.json({ subscribers: data })
   } catch (err) {
-    console.error(err)
+    console.error('Newsletter API error:', err)
     return NextResponse.json(
       { error: 'Something went wrong' },
       { status: 500 }

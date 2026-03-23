@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
 export async function GET(req: Request) {
   try {
+    const supabase = getSupabaseAdmin() // ✅ FIXED
+
     const { searchParams } = new URL(req.url)
     const range = searchParams.get('range') || '7'
 
-    let query = supabaseAdmin
+    let query = supabase
       .from('orders')
       .select('*')
       .eq('payment_status', 'paid')
@@ -62,6 +64,7 @@ export async function GET(req: Request) {
       chartData,
     })
   } catch (err) {
+    console.error(err) // ✅ helpful for debugging
     return NextResponse.json({ error: 'Error' }, { status: 500 })
   }
 }

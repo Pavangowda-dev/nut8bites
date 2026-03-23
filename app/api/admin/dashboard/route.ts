@@ -1,21 +1,23 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { getSupabaseAdmin } from '@/lib/supabase-admin'
 
 export async function GET() {
   try {
+    const supabase = getSupabaseAdmin() // ✅ FIXED
+
     // 1️⃣ Orders
-    const { data: orders } = await supabaseAdmin
+    const { data: orders } = await supabase
       .from('orders')
       .select('*')
       .eq('payment_status', 'paid')
 
     // 2️⃣ Contacts
-    const { data: contacts } = await supabaseAdmin
+    const { data: contacts } = await supabase
       .from('contact_messages')
       .select('*')
 
     // 3️⃣ Newsletter
-    const { data: newsletter } = await supabaseAdmin
+    const { data: newsletter } = await supabase
       .from('newsletter')
       .select('*')
 
@@ -25,11 +27,13 @@ export async function GET() {
 
     // 5️⃣ Recent orders (last 5)
     const recentOrders =
-      orders?.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() -
-          new Date(a.created_at).getTime()
-      ).slice(0, 5) || []
+      orders
+        ?.sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() -
+            new Date(a.created_at).getTime()
+        )
+        .slice(0, 5) || []
 
     return NextResponse.json({
       totalOrders: orders?.length || 0,
@@ -39,7 +43,7 @@ export async function GET() {
       recentOrders,
     })
   } catch (err) {
-    console.error(err)
+    console.error('Dashboard API error:', err) // ✅ better logging
     return NextResponse.json(
       { error: 'Failed to load dashboard' },
       { status: 500 }
