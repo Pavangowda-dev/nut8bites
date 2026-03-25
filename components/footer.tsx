@@ -102,10 +102,10 @@ export function Footer() {
               </li>
               <li>
                 <a
-                  href="tel:+919901475158"
+                  href="tel:+919902714771"
                   className="hover:text-amber-300 transition-colors"
                 >
-                  +91 9901475158
+                  +919902714771
                 </a>
               </li>
               <li>India-wide shipping available</li>
