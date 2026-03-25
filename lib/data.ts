@@ -33,17 +33,24 @@ export interface BlogPost {
 export const products: Product[] = [
   {
     id: 'super-seeds-pb',
-    name: 'Super Seeds Peanut Butter',
+    name: 'Super Seeds Peanut Butter | High Protein Natural Peanut Butter',
     description:
-      'Roasted peanut butter with sunflower seeds, pumpkin seeds, chia seeds, melon seeds, and raisins for added texture, taste, and nutrition.',
-    shortDescription: 'Roasted peanut butter enriched with super seeds and raisins.',
+      'Buy homemade super seeds peanut butter made with premium roasted peanuts, sunflower seeds, pumpkin seeds, chia seeds, melon seeds, and raisins. No preservatives, no additives. A healthy high-protein peanut butter made fresh in Karnataka, India.',
+    shortDescription:
+      'High protein peanut butter with super seeds. No preservatives.',
     prices: {
       '500 g': 300,
       '1 kg': 600,
     },
     image: '/images/Product-images/super-seeds.png',
     category: 'Peanut Butter',
-    tags: ['protein', 'natural', 'seeds', 'crunchy'],
+    tags: [
+      'homemade peanut butter',
+      'high protein peanut butter',
+      'natural peanut butter India',
+      'no preservatives',
+      'healthy peanut butter',
+    ],
     ingredients: [
       'Roasted Peanuts',
       'Sunflower Seeds',
@@ -68,17 +75,24 @@ export const products: Product[] = [
 
   {
     id: 'crunchy-pb',
-    name: 'Crunchy Peanut Butter',
+    name: 'Crunchy Peanut Butter | 100% Natural No Preservatives',
     description:
-      'Pure crunchy peanut butter made from 100% roasted peanuts with no unnecessary additives.',
-    shortDescription: 'Pure crunchy peanut butter.',
+      'Buy crunchy peanut butter made from 100% roasted peanuts with no preservatives or additives. Freshly made natural peanut butter in India, perfect for protein intake, gym diet, and healthy lifestyle.',
+    shortDescription:
+      '100% natural crunchy peanut butter with no preservatives.',
     prices: {
       '500 g': 250,
       '1 kg': 500,
     },
     image: '/images/Product-images/crunchy.png',
     category: 'Peanut Butter',
-    tags: ['crunchy', 'natural', 'classic'],
+    tags: [
+      'crunchy peanut butter',
+      'natural peanut butter',
+      'no preservatives peanut butter',
+      'protein food',
+      'healthy snacks India',
+    ],
     ingredients: ['100% Roasted Peanuts'],
     packSizes: ['500 g', '1 kg'],
     nutrition: [
@@ -96,17 +110,24 @@ export const products: Product[] = [
 
   {
     id: 'peanut-chikki',
-    name: 'Peanut Chikki Bites',
+    name: 'Peanut Chikki Bites | Jaggery Healthy Snack',
     description:
-      'Traditional jaggery-based peanut chikki crafted into bite-sized crunchy snacks that deliver authentic homemade taste.',
-    shortDescription: 'Traditional bite-sized peanut chikki.',
+      'Traditional peanut chikki made with jaggery and roasted peanuts. A healthy Indian snack with natural sweetness, no refined sugar, and no preservatives. Perfect for energy and daily snacking.',
+    shortDescription:
+      'Healthy jaggery peanut chikki with no preservatives.',
     prices: {
       '250 g': 150,
       '500 g': 300,
     },
     image: '/images/Product-images/chikki.png',
     category: 'Snacks',
-    tags: ['chikki', 'traditional', 'crispy'],
+    tags: [
+      'peanut chikki',
+      'jaggery snacks',
+      'healthy Indian snacks',
+      'natural sweets',
+      'energy snacks',
+    ],
     ingredients: [
       'Roasted Peanuts',
       'Jaggery',
@@ -128,17 +149,24 @@ export const products: Product[] = [
 
   {
     id: 'green-kadalebeeja',
-    name: 'Green kadalebeeja',
+    name: 'Green Chilli Peanuts | Spicy Roasted Peanuts',
     description:
-      'A flavorful traditional peanut snack seasoned with fresh green chilli and curry leaves.',
-    shortDescription: 'Traditional green chilli peanut snack.',
+      'Spicy roasted peanuts flavored with fresh green chilli and curry leaves. A traditional Karnataka snack made fresh with no preservatives. Perfect crunchy snack for spice lovers.',
+    shortDescription:
+      'Spicy green chilli roasted peanuts.',
     prices: {
       '250 g': 150,
       '500 g': 300,
     },
     image: '/images/Product-images/green-peanut.png',
     category: 'Roasted Peanuts',
-    tags: ['green', 'roasted', 'spicy'],
+    tags: [
+      'spicy peanuts',
+      'green chilli peanuts',
+      'roasted peanuts India',
+      'healthy snacks',
+      'no preservatives snacks',
+    ],
     ingredients: [
       'Roasted Peanuts',
       'Fresh Green Chilli Paste',
@@ -161,17 +189,24 @@ export const products: Product[] = [
 
   {
     id: 'red-kadalebeeja',
-    name: 'Red kadalebeeja',
+    name: 'Spicy Red Chilli Peanuts | Roasted Peanut Snack',
     description:
-      'A spicy roasted peanut snack prepared with red chilli and cumin for bold flavor.',
-    shortDescription: 'Spicy roasted red peanut snack.',
+      'Roasted peanuts seasoned with red chilli and cumin for bold spicy flavor. A traditional Indian snack with no preservatives, perfect for evening cravings.',
+    shortDescription:
+      'Spicy red chilli roasted peanuts.',
     prices: {
       '250 g': 150,
       '500 g': 300,
     },
     image: '/images/Product-images/red-peanut.png',
     category: 'Roasted Peanuts',
-    tags: ['red', 'roasted', 'spicy'],
+    tags: [
+      'red chilli peanuts',
+      'spicy peanuts India',
+      'roasted peanut snacks',
+      'healthy snacks',
+      'evening snacks',
+    ],
     ingredients: [
       'Roasted Peanuts',
       'Red Chilli Powder',
@@ -193,17 +228,24 @@ export const products: Product[] = [
 
   {
     id: 'salt-roasted-kadalebeeja',
-    name: 'Salt Roasted Peanuts',
+    name: 'Salted Roasted Peanuts | Classic Healthy Snack',
     description:
-      'Classic roasted peanuts lightly seasoned with sea salt for a simple and crunchy snack.',
-    shortDescription: 'Salt roasted peanuts.',
+      'Classic salted roasted peanuts made with premium quality peanuts and sea salt. A simple, healthy, and protein-rich snack with no preservatives.',
+    shortDescription:
+      'Classic salted roasted peanuts.',
     prices: {
       '250 g': 150,
       '500 g': 300,
     },
     image: '/images/Product-images/Salted-peanut.png',
     category: 'Roasted Peanuts',
-    tags: ['salted', 'roasted'],
+    tags: [
+      'salted peanuts',
+      'roasted peanuts',
+      'healthy snacks India',
+      'protein snacks',
+      'natural snacks',
+    ],
     ingredients: ['Roasted Peanuts', 'Sea Salt'],
     packSizes: ['250 g', '500 g'],
     nutrition: [
@@ -220,17 +262,24 @@ export const products: Product[] = [
 
   {
     id: 'peanut-energy-ladoo',
-    name: 'Peanut Energy Ladoo',
+    name: 'Peanut Energy Ladoo | Natural Protein Energy Balls',
     description:
-      'Nutritious energy ladoos made with peanuts, dates, seeds, and dry fruits for natural energy.',
-    shortDescription: 'Nutritious energy ladoos.',
+      'Healthy peanut energy ladoos made with peanuts, dates, seeds, and dry fruits. No refined sugar, no preservatives. A perfect natural energy snack for gym, travel, and daily nutrition.',
+    shortDescription:
+      'Natural peanut energy ladoos with no preservatives.',
     prices: {
       '250 g': 150,
       '500 g': 300,
     },
     image: '/images/Product-images/laddoo.png',
     category: 'Energy Snacks',
-    tags: ['energy', 'ladoo'],
+    tags: [
+      'energy ladoo',
+      'protein snacks India',
+      'healthy sweets',
+      'natural energy balls',
+      'no sugar snacks',
+    ],
     ingredients: [
       'Roasted Peanuts',
       'Dates',

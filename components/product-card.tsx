@@ -46,6 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <Link
       href={`/products/${product.id}`}
       className="group block h-full"
+      aria-label={`Buy ${product.name} online in India`}
     >
       <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 h-full flex flex-col">
 
@@ -53,8 +54,10 @@ export function ProductCard({ product }: ProductCardProps) {
         <div className="relative w-full aspect-square bg-gray-100 overflow-hidden">
           <Image
             src={product.image}
-            alt={product.name}
+            alt={`${product.name} - homemade peanut butter & healthy snacks in India`}
             fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            priority={false}
             className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
 
@@ -78,8 +81,19 @@ export function ProductCard({ product }: ProductCardProps) {
             </h3>
           </div>
 
-          <p className="text-sm text-gray-600 line-clamp-2 mb-3 flex-1">
+          <p className="text-sm text-gray-600 line-clamp-2 mb-2 flex-1">
             {product.shortDescription}
+          </p>
+
+          {/* 🔥 EXTRA SEO HIDDEN TEXT */}
+          <p className="hidden">
+            Buy {product.name} online in India. Homemade, natural, no preservatives,
+            high protein healthy peanut snack from Nut8Bites.
+          </p>
+
+          {/* ⭐ Trust Badge */}
+          <p className="text-xs text-green-700 font-medium mb-2">
+            No Preservatives • High Protein • Freshly Made
           </p>
 
           {/* Rating */}
@@ -98,7 +112,7 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
 
             <span className="text-xs text-gray-500">
-              ({product.reviews})
+              ({product.reviews} reviews)
             </span>
           </div>
 
@@ -128,6 +142,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
             <button
               onClick={handleAddToCart}
+              aria-label={`Add ${product.name} to cart`}
               className={`flex-1 py-2.5 px-3 rounded-lg font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                 isAdded
                   ? 'bg-blue-600 text-white'
@@ -140,6 +155,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
             <button
               onClick={handleWishlist}
+              aria-label={`Add ${product.name} to wishlist`}
               className={`py-2.5 px-3 rounded-lg transition-all duration-300 ${
                 inWishlist
                   ? 'bg-red-50 text-red-600'
@@ -153,7 +169,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
           {/* View Details */}
           <div className="mt-3 text-center text-sm font-medium text-amber-600 group-hover:text-amber-700 transition-colors">
-            View Details
+            View Product Details
           </div>
 
         </div>

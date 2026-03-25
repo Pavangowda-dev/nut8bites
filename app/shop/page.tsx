@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
+import type { Metadata } from 'next'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { ProductCard } from '@/components/product-card'
@@ -9,6 +10,31 @@ import { products } from '@/lib/data'
 import { ChevronDown } from 'lucide-react'
 
 type SortOption = 'popular' | 'price-low' | 'price-high' | 'newest'
+
+/* 🔥 SEO METADATA FOR SHOP PAGE */
+export const metadata: Metadata = {
+  title: 'Buy Peanut Butter & Healthy Peanut Snacks Online | Nut8Bites',
+  description:
+    'Shop homemade peanut butter and healthy peanut snacks online in India. No preservatives, high protein, fresh and natural. Order Nut8Bites now.',
+  keywords: [
+    'buy peanut butter online India',
+    'healthy peanut snacks',
+    'protein snacks India',
+    'natural peanut butter',
+    'no preservatives peanut butter',
+    'peanut snacks online',
+    'Nut8Bites products',
+  ],
+  openGraph: {
+    title: 'Buy Peanut Butter & Healthy Snacks | Nut8Bites',
+    description:
+      'Shop fresh peanut butter and natural snacks made in Karnataka.',
+    url: 'https://nut8bites.com/shop',
+    siteName: 'Nut8Bites',
+    locale: 'en_IN',
+    type: 'website',
+  },
+}
 
 export default function ShopPage() {
   return (
@@ -72,15 +98,32 @@ function ShopContent() {
 
       <main className="flex-1">
 
+        {/* 🔥 STRUCTURED DATA (PRODUCT LIST SEO BOOST) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ItemList',
+              itemListElement: filteredAndSortedProducts.map((product, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                name: product.name,
+              })),
+            }),
+          }}
+        />
+
         <section className="bg-white py-12 md:py-14">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
+            {/* 🔥 SEO IMPROVED H1 */}
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-3">
-              Our Products
+              Buy Peanut Butter & Healthy Snacks Online
             </h1>
 
             <p className="text-lg text-gray-600">
-              Discover our complete range of premium peanut snacks
+              Fresh, homemade peanut butter and natural peanut snacks with no preservatives.
             </p>
 
             {searchQuery && (

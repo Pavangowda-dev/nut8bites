@@ -21,34 +21,31 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://nut8bites.com'),
 
   title: {
-    default: 'Nut8Bites | Premium Peanut Snacks',
+    default:
+      'Homemade Peanut Butter & Natural Peanut Snacks | Nut8Bites India',
     template: '%s | Nut8Bites',
   },
 
   description:
-    'Premium peanut snacks crafted from selected Chintamani peanuts. Natural ingredients, protein-rich nutrition, and authentic flavor in every bite.',
+    'Buy homemade peanut butter and natural peanut snacks in India. No preservatives, no additives. Freshly made in Karnataka using premium Chintamani peanuts. High protein, healthy and delicious.',
 
   keywords: [
-    'Nut8Bites',
-    'peanut snacks',
-    'healthy snacks',
-    'protein snacks',
-    'natural peanuts',
+    'homemade peanut butter',
+    'natural peanut butter India',
+    'no preservatives peanut butter',
+    'healthy peanut snacks',
+    'protein snacks India',
     'Chintamani peanuts',
-    'peanut butter',
-    'healthy nutrition',
+    'peanut butter Bangalore',
+    'fresh peanut butter Karnataka',
+    'organic peanut butter India',
+    'healthy snacks India',
   ],
 
   applicationName: 'Nut8Bites',
 
-  authors: [
-    {
-      name: 'Nut8Bites',
-    },
-  ],
-
+  authors: [{ name: 'Nut8Bites' }],
   creator: 'Nut8Bites',
-
   publisher: 'Nut8Bites',
 
   robots: {
@@ -61,31 +58,29 @@ export const metadata: Metadata = {
     locale: 'en_IN',
     url: 'https://nut8bites.com',
     siteName: 'Nut8Bites',
-    title: 'Nut8Bites | Premium Peanut Snacks',
+    title: 'Homemade Peanut Butter | No Preservatives | Nut8Bites India',
     description:
-      'Premium peanut snacks crafted from selected Chintamani peanuts.',
+      'Fresh homemade peanut butter with no preservatives. Made in Karnataka using premium peanuts.',
     images: [
       {
         url: '/images/Nut8bites-favicon.png',
         width: 1200,
         height: 630,
-        alt: 'Nut8Bites',
+        alt: 'Nut8Bites Peanut Butter',
       },
     ],
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'Nut8Bites | Premium Peanut Snacks',
+    title: 'Homemade Peanut Butter | Nut8Bites',
     description:
-      'Premium peanut snacks crafted from selected Chintamani peanuts.',
+      'Natural peanut butter with no preservatives. Fresh & healthy.',
     images: ['/images/Nut8bites-favicon.png'],
   },
 
   icons: {
     icon: '/images/Nut8bites-favicon.png',
-    shortcut: '/images/Nut8bites-favicon.png',
-    apple: '/images/Nut8bites-favicon.png',
   },
 }
 
@@ -108,6 +103,26 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>
+
+        {/* 🔥 STRUCTURED DATA (SEO BOOST) */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'FoodProduct',
+              name: 'Nut8Bites Peanut Butter',
+              description:
+                'Homemade peanut butter with no preservatives made in Karnataka, India.',
+              brand: {
+                '@type': 'Brand',
+                name: 'Nut8Bites',
+              },
+              countryOfOrigin: 'India',
+            }),
+          }}
+        />
+
         <Analytics />
       </body>
     </html>
