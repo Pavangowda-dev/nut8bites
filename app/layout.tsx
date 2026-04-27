@@ -94,19 +94,27 @@ export const viewport: Viewport = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="en" className={`${poppins.variable} ${inter.variable}`}>
-      <body className="font-inter antialiased bg-white text-gray-900">
+    <html
+      lang="en"
+      className={`${poppins.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
+      <body
+        className="font-inter antialiased bg-white text-gray-900"
+        suppressHydrationWarning
+      >
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>
 
-        {/* 🔥 STRUCTURED DATA (SEO BOOST) */}
+        {/* ✅ Structured Data (safe) */}
         <script
           type="application/ld+json"
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               '@context': 'https://schema.org',
